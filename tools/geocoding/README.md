@@ -125,3 +125,7 @@ function geocodeAddresses() {
   }
 }
 ```
+
+
+## Google Map APIキーの取得方法
+* chatGPTに手順を聞いたほうが早い
