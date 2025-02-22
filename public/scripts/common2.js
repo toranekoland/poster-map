@@ -21,16 +21,32 @@ async function getVoteVenuePins() {
   return response.json();
 }
 
-async function getBoardPins(block=null, smallBlock=null) {
+async function getConquerblock() {
+  const conquerblockResponse = await fetch('/data/conquerblock.json');
+  const conquerblock = await conquerblockResponse.json();
+  return conquerblock;
+}
+
+async function getConquerdata(block = null) {
   let response
-  if (block==null) {
+  if (block == null) {
+    response = await fetch('/data/conquer.json')
+  } else {
+    response = await fetch(`/data/conquer/${block}.json`)
+    }
+  return response.json();
+}
+
+async function getBoardPins(block = null, smallBlock = null) {
+  let response
+  if (block == null) {
     response = await fetch('/data/all.json')
   } else {
     response = await fetch(`/data/block/${block}.json`)
   }
   const data = await response.json();
 
-  if (smallBlock==null) {
+  if (smallBlock == null) {
     return data
   } else {
     const smallBlockSplit = smallBlock.split('-')
@@ -56,31 +72,31 @@ async function loadVoteVenuePins(layer) {
 }
 
 
-function progressBox(progressValue, position){
-  var control = L.control({position: position});
+function progressBox(progressValue, position) {
+  var control = L.control({ position: position });
   control.onAdd = function () {
 
-      var div = L.DomUtil.create('div', 'info progress')
+    var div = L.DomUtil.create('div', 'info progress')
 
-      div.innerHTML += '<p>完了率 (全域)</p>'
-      div.innerHTML += `<p><span class="progressValue">${progressValue}</span>%</p>`
+    div.innerHTML += '<p>完了率 (全域)</p>'
+    div.innerHTML += `<p><span class="progressValue">${progressValue}</span>%</p>`
 
-      return div;
+    return div;
   };
 
   return control
 }
 
-function progressBoxCountdown(progressValue, position){
-  var control = L.control({position: position});
+function progressBoxCountdown(progressValue, position) {
+  var control = L.control({ position: position });
   control.onAdd = function () {
 
-      var div = L.DomUtil.create('div', 'info progress')
+    var div = L.DomUtil.create('div', 'info progress')
 
-      div.innerHTML += '<p>残り</p>'
-      div.innerHTML += `<p><span class="progressValue">${progressValue}</span>ヶ所</p>`
+    div.innerHTML += '<p>残り</p>'
+    div.innerHTML += `<p><span class="progressValue">${progressValue}</span>ヶ所</p>`
 
-      return div;
+    return div;
   };
 
   return control
@@ -93,7 +109,7 @@ const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 })
 const googleMap = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
   maxZoom: 18,
-  subdomains:['mt0','mt1','mt2','mt3'],
+  subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
   attribution: '&copy; Google'
 });
 const japanBaseMap = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png', {

@@ -4,20 +4,31 @@ async function getblockList() {
     return areablock;
   }
 
-function generateMenu() {
-    const container = document.getElementById('container');
-    posts.forEach(post => {
-        const postElement = document.createElement('div');
-        postElement.classList.add('post');
-        postElement.innerHTML = `
-            <h2>${post.title}</h2>
-            <p>${post.content}</p>
-            <p><strong>Author:</strong> ${post.author}</p>
-        `;
-        container.appendChild(postElement);
+  function generateMenu(areablock) {
+    const container = document.getElementById('container'); // コンテナの要素を取得
+    console.log(areablock); // 取得したデータをコンソールに表示（デバッグ用）
+    areablock.forEach(area => {
+        // リストアイテムを作成
+        const linkElement = document.createElement('a');
+        linkElement.href = `./map?block=${area.block_key}`;
+        linkElement.classList.add('list-group-item', 'list-group-item-action');
+        linkElement.textContent = area.block_name;
+
+        // コンテナに追加
+        container.appendChild(linkElement);
     });
 }
 
-let areablock;
-console.log(areablock);
-generateMenu(areablock);  
+// ページがロードされた後に非同期でデータを取得し、メニューを生成
+async function init() {
+    try {
+        const areablock = await getblockList(); // データを取得
+        console.log(areablock); // 取得したデータをコンソールに表示（デバッグ用）
+        generateMenu(areablock); // 取得したデータを基にメニューを生成
+    } catch (error) {
+        console.error('Error fetching the data:', error); // エラーハンドリング
+    }
+}
+
+// ページロード時にinit関数を呼び出す
+init();

@@ -33,6 +33,10 @@ def main(input_path, block_path, output_path):
     final_data.to_json(json_output_path, orient='records', force_ascii=False)
     print(f"File saved to {json_output_path}")
 
+    json_output_path = os.path.join(output_path, 'conquerblock.json')
+    blocklist.to_json(json_output_path, orient='records', force_ascii=False)
+    print(f"File saved to {json_output_path}")
+
 if __name__ == "__main__":
     if len(sys.argv) != 4:
         print("Usage: python script.py <input_path> <block_path> <output_path>")
