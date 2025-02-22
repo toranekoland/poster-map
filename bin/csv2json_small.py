@@ -38,6 +38,10 @@ def main(input_path, arealist_path, areablock_path, output_path):
     final_data.to_json(json_output_path, orient='records', force_ascii=False)
     print(f"File saved to {json_output_path}")
 
+    json_output_path = os.path.join(output_path, 'areablock.json')
+    areablock.to_json(json_output_path, orient='records', force_ascii=False)
+    print(f"File saved to {json_output_path}")
+
 if __name__ == "__main__":
     if len(sys.argv) != 5:
         print("Usage: python script.py <input_path> <arealist_path> <block_path> <output_path>")
