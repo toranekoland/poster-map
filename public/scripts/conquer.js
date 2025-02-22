@@ -75,8 +75,24 @@ function getGeoJsonStyle(progress) {
   }
 }
 
+function getAreakeyFromUrlParam() {
+  const params = new URL(document.location.href).searchParams
+  const block = params.get("area_key")
+  console.log(area_key)
+  return area_key
+}
+
+function getPrefFromUrlParam() {
+  const params = new URL(document.location.href).searchParams
+  const block = params.get("pref")
+  console.log(pref)
+  return pref
+}
+
 let areaList;
 let progress;
+const area_key = getAreakeyFromUrlParam()
+const pref = getPrefFromUrlParam()
 
 Promise.all([getAreaList(), getProgress(), getProgressCountdown()]).then(function(res) {
   areaList = res[0];
