@@ -1,5 +1,6 @@
 # エリアリストをjsonに変換
 # area_id,area_name,area_block
+# python3 bin/arealistcsv2json_small.py public/data/arealist.csv public/data/arealist.json
 
 import pandas as pd
 import sys
