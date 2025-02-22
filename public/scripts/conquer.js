@@ -77,14 +77,14 @@ function getGeoJsonStyle(progress) {
 
 function getAreakeyFromUrlParam() {
   const params = new URL(document.location.href).searchParams
-  const block = params.get("area_key")
+  const area_key = params.get("area_key")
   console.log(area_key)
   return area_key
 }
 
 function getPrefFromUrlParam() {
   const params = new URL(document.location.href).searchParams
-  const block = params.get("pref")
+  const pref = params.get("pref")
   console.log(pref)
   return pref
 }
