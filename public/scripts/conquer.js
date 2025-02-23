@@ -126,9 +126,6 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(), getConquerblo
           return response.json();
         })
         .then((data) => {
-          console.log(key,blockdata['area_id'])
-          console.log(blockdata['area_key'],blockdata['area_name'])
-          console.log(conquerareatotal[blockdata['area_id']])
           const polygon = L.geoJSON(data, {
             style: getGeoJsonStyle(conquerareatotal[blockdata['area_id']]),
           });
@@ -151,7 +148,6 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(), getConquerblo
         });
     }
     areatotalBox((conquerareatotal['total'] ), 'topright').addTo(map)
-    progressBoxCountdown((parseInt(progressCountdown['total'])), 'topright').addTo(map)
     legend().addTo(map);
   } else {
     // area_keyが定義されている場合、詳細マップ(ポスター枚数による塗分け)を表示する
