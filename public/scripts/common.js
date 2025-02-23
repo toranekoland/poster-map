@@ -111,3 +111,20 @@ const grayIcon = L.icon({
   className: "icon-gray",
 });
 
+async function getConquerblock() {
+  const conquerblockResponse = await fetch('/data/conquerblock.json');
+  const conquerblock = await conquerblockResponse.json();
+  return conquerblock;
+}
+
+async function getConquerdata(block = null) {
+  let response
+  if (block == null) {
+    response = await fetch('/data/conquerlist.json')
+  } else {
+    response = await fetch(`/data/conquer/${block}.json`)
+    }
+  return response.json();
+}
+
+const milestones = [0, 100, 500, 1000, 5000]; //進捗枚数
