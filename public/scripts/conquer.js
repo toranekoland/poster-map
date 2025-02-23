@@ -135,7 +135,10 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerbloc
     legend().addTo(map);
   } else {
     // area_keyが定義されている場合、詳細マップ(ポスター枚数による塗分け)を表示する
+    console.log(area_key)
     console.log(conquerblock)
+    const area = conquerblock.find(item => item.area_key === area_key);
+    console.log(area)
     for (let [key, conquer] of Object.entries(conquerdata)) {
       const geoJsonUrl = `https://uedayou.net/loa/${pref}${conquer['subarea_name']}.geojson`;
       fetch(geoJsonUrl)

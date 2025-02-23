@@ -15,7 +15,7 @@ def main(input_path, block_path, output_path):
     inputdata.rename(columns={'area': 'area_name'}, inplace=True) # inputdataのareaをarea_nameに変更
 
     blocklist = pd.read_csv(block_path)
-    blocklist = blocklist[['area_id', 'area_key', 'area_name']] # blocklistをarea_id, area_key, area_nameだけにする
+    blocklist = blocklist[['area_id', 'area_key', 'area_name', 'lat', 'long']] # blocklistをarea_id, area_key, area_name, 緯度経度だけにする
     conquer_blocks = dict(zip(blocklist['area_key'], blocklist['area_name'])) # key valueの形のJSONにする
 
     merged_data = pd.merge(inputdata, blocklist, on='area_name', how='left', suffixes=('', '')) # left_joinでマージ
