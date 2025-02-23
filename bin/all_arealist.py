@@ -59,6 +59,8 @@ def get_child_data(url, level=0):  # levelパラメータを追加して再帰�
     # **リクエスト後に1秒待機**（過負荷を避けるため）
     time.sleep(1)  # 1秒待機
 
+def main(input_path, block_path, output_path):
+
 # 初期データ取得
 target_url = f"{base_url}.json"
 response = requests.get(target_url)
@@ -90,3 +92,14 @@ else:
     print(f"Response Headers: {response.headers}")
 
 print("CSVファイルにURLを書き込みました。")
+
+if __name__ == "__main__":
+    if len(sys.argv) != 4:
+        print("Usage: python script.py <target_str> <max_depth> <output_path>")
+        sys.exit(1)
+
+    target_str = sys.argv[1]  # "神奈川県横浜市"
+    max_depth = sys.argv[2]   # 階層の深さ
+    output_path = sys.argv[3] # public/data/
+
+    main(input_path, block_path, output_path)
