@@ -23,7 +23,6 @@ function legend() {
       for (var i = 0; i < grades.length; i++) {
         labelsDiv.innerHTML += '<span>' + grades[i] + '枚</span>';
       }
-      console.log(div)
       return div;
   };
 
@@ -62,13 +61,11 @@ function getProgressColor(value) {
   const r = Math.round(blueStart.r + clampedRangePct * (blueEnd.r - blueStart.r));
   const g = Math.round(blueStart.g + clampedRangePct * (blueEnd.g - blueStart.g));
   const b = Math.round(blueStart.b + clampedRangePct * (blueEnd.b - blueStart.b));
-  console.log('color:','r=',r,'g=',g,'b=',b)
-
+ 
   return `rgb(${r}, ${g}, ${b})`;
 }
 
 function getGeoJsonStyle(value) {
-  console.log('GetGeoJsonStyle:',value)
   return {
     color: 'black',
     fillColor: getProgressColor(value),
@@ -104,8 +101,6 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerbloc
   if (area_key === null) {
     // area_keyが定義されていない場合、全体マップ（ポリゴンによる描写とクリックしてリンク先に飛ぶ）を表示する
     for (let [key, blockdata] of Object.entries(conquerblock)) {
-      console.log(key)
-      console.log(blockdata)
       const geoJsonUrl = `https://uedayou.net/loa/${pref}${blockdata['area_name']}.geojson`;
       fetch(geoJsonUrl)
         .then((response) => {
@@ -118,7 +113,9 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerbloc
           const polygon = L.geoJSON(data, {
             style: getGeoJsonStyle(progress[key]),
           });
-          // クリックして詳細マップへ
+          const centroid = polygon.getBounds().getCenter();  // ポリゴンの境界ボックスの中心を取得
+          console.log("中心点の緯度経度:", centroid.lat, centroid.lng);
+            // クリックして詳細マップへ
           polygon.on('click', function () {
             const currentUrl = new URL(window.location.href);
             currentUrl.searchParams.set('area_key', blockdata['area_key']);
@@ -138,6 +135,7 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerbloc
     legend().addTo(map);
   } else {
     // area_keyが定義されている場合、詳細マップ(ポスター枚数による塗分け)を表示する
+    console.log(conquerblock)
     for (let [key, conquer] of Object.entries(conquerdata)) {
       const geoJsonUrl = `https://uedayou.net/loa/${pref}${conquer['subarea_name']}.geojson`;
       fetch(geoJsonUrl)
