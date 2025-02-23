@@ -1,4 +1,4 @@
-const map = L.map("map").setView([35.400550665, 139.37576707], 11);
+const map = L.map("map").setView([35.669400214188606, 139.48343915372877], 11);
 
 // 背景地図はOpenStreetMap
 const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -8,22 +8,22 @@ const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 function legend() {
-  var control = L.control({position: 'topright'});
+  var control = L.control({ position: 'topright' });
   control.onAdd = function () {
 
-      var div = L.DomUtil.create('div', 'info legend')
-      grades = milestones.slice().reverse();
+    var div = L.DomUtil.create('div', 'info legend')
+    grades = milestones.slice().reverse();
 
-      div.innerHTML += '<p>凡例</p>';
+    div.innerHTML += '<p>凡例</p>';
 
-      var legendInnerContainerDiv = L.DomUtil.create('div', 'legend-inner-container', div);
-      legendInnerContainerDiv.innerHTML += '<div class="legend-gradient"></div>';
+    var legendInnerContainerDiv = L.DomUtil.create('div', 'legend-inner-container', div);
+    legendInnerContainerDiv.innerHTML += '<div class="legend-gradient"></div>';
 
-      var labelsDiv = L.DomUtil.create('div', 'legend-labels', legendInnerContainerDiv);
-      for (var i = 0; i < grades.length; i++) {
-        labelsDiv.innerHTML += '<span>' + grades[i] + '枚</span>';
-      }
-      return div;
+    var labelsDiv = L.DomUtil.create('div', 'legend-labels', legendInnerContainerDiv);
+    for (var i = 0; i < grades.length; i++) {
+      labelsDiv.innerHTML += '<span>' + grades[i] + '枚</span>';
+    }
+    return div;
   };
 
   return control
@@ -61,7 +61,7 @@ function getProgressColor(value) {
   const r = Math.round(blueStart.r + clampedRangePct * (blueEnd.r - blueStart.r));
   const g = Math.round(blueStart.g + clampedRangePct * (blueEnd.g - blueStart.g));
   const b = Math.round(blueStart.b + clampedRangePct * (blueEnd.b - blueStart.b));
- 
+
   return `rgb(${r}, ${g}, ${b})`;
 }
 
@@ -87,7 +87,7 @@ const lat = getParamFromUrl("lat");
 const lng = getParamFromUrl("lng");
 console.log(area_key, pref, lat, lng); // それぞれの値を確認
 
-Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerblock(),getConquerdata(area_key)]).then(function (res) {
+Promise.all([getAreaList(), getProgress(), getProgressCountdown(), getConquerblock(), getConquerdata(area_key)]).then(function (res) {
   areaList = res[0];
   progress = res[1];
   progressCountdown = res[2];
@@ -96,6 +96,25 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerbloc
 
   if (area_key === null) {
     // area_keyが定義されていない場合、全体マップ（ポリゴンによる描写とクリックしてリンク先に飛ぶ）を表示する
+    // 都道府県の中心地を取得して移動
+    const geoPrefUrl = `https://uedayou.net/loa/${pref}.geojson`;
+    fetch(geoPrefUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Failed to fetch geojson for ${blockdata['area_name']}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const polygon = L.geoJSON(data);
+        const centroid = polygon.getBounds().getCenter();  // ポリゴンの境界ボックスの中心を取得
+        console.log("中心点の緯度経度:", centroid.lat, centroid.lng);
+        map.setView([centroid.lat, centroid.lng], 11);
+
+      })
+      .catch((error) => {
+        console.error('Error fetching geojson:', error);
+      });
     for (let [key, blockdata] of Object.entries(conquerblock)) {
       const geoJsonUrl = `https://uedayou.net/loa/${pref}${blockdata['area_name']}.geojson`;
       fetch(geoJsonUrl)
@@ -113,7 +132,7 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerbloc
           console.log("key:", key, blockdata['area_name']);
           console.log("中心点の緯度経度:", centroid.lat, centroid.lng);
           const marker = L.marker([centroid.lat, centroid.lng]).addTo(map);
-          marker.bindTooltip(blockdata['area_name'], { permanent: true, direction: 'bottom',offset: [-15, 40] }).openTooltip();
+          marker.bindTooltip(blockdata['area_name'], { permanent: true, direction: 'bottom', offset: [-15, 40] }).openTooltip();
 
           // マーカーをクリックして詳細マップへ
           marker.on('click', function () {
@@ -139,22 +158,22 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerbloc
     for (let [key, conquer] of Object.entries(conquerdata)) {
       const geoJsonUrl = `https://uedayou.net/loa/${pref}${conquer['subarea_name']}.geojson`;
       fetch(geoJsonUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Failed to fetch geojson for ${conquer['subarea_name']}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const polygon = L.geoJSON(data, {
-          style: getGeoJsonStyle(conquer['total_posting']),
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Failed to fetch geojson for ${conquer['subarea_name']}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          const polygon = L.geoJSON(data, {
+            style: getGeoJsonStyle(conquer['total_posting']),
+          });
+          polygon.bindPopup(`<b>${conquer['subarea_name']}</b><br>トータル: ${conquer['total_posting']}枚<br>最近: ${conquer['recently_posting']}枚`);
+          polygon.addTo(map);
+        })
+        .catch((error) => {
+          console.error('Error fetching geojson:', error);
         });
-        polygon.bindPopup(`<b>${conquer['subarea_name']}</b><br>トータル: ${conquer['total_posting']}枚<br>最近: ${conquer['recently_posting']}枚`);
-        polygon.addTo(map);
-      })
-      .catch((error) => {
-        console.error('Error fetching geojson:', error);
-      });
     }
     legend().addTo(map);
   }
