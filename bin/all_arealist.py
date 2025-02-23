@@ -1,81 +1,68 @@
-# https://uedayou.net/loa/神奈川県　からjsonを取ってきて再帰的に全エリアのリストを取る
-#
-#
-
 import json
 import requests
 
-# https://uedayou.net/loa/神奈川県
-base_url = "https://uedayou.net/loa/神奈川県"
+# 基本URL
+base_url = "https://uedayou.net/loa/神奈川県横浜市"
 
-# データ取得
+# すでに取得したURLを保持して、重複リクエストを防ぐ
+visited_urls = set()
+
+# 再帰的にデータを取得する関数
+def get_child_data(url):
+    # すでにこのURLを取得している場合はスキップ
+    if url in visited_urls:
+        return
+    
+    visited_urls.add(url)  # 取得済みURLを記録
+    
+    print(f"Requesting data from: {url}")
+    response = requests.get(url)
+    
+    # ステータスコードの確認
+    if response.status_code == 200:
+        try:
+            data = response.json()  # JSONデータの取得
+        except json.JSONDecodeError:
+            print(f"Failed to decode JSON from {url}. Response: {response.text[:200]}")  # JSONでないレスポンス
+            return
+    else:
+        return
+        
+    # "hasPart"があれば、その部分のデータを取得
+    has_part = data.get("http://purl.org/dc/terms/hasPart", [])
+    
+    if has_part:
+        # 子供のデータを再帰的に取得
+        for item in has_part:
+            child_url = item["value"] + ".json"
+            print(f"Found child part: {child_url}")
+            get_child_data(child_url)  # 再帰的に処理
+    else:
+        print(f"No 'hasPart' found in: {url}")
+
+# 初期データ取得
 target_url = f"{base_url}.json"
 response = requests.get(target_url)
 
+# ステータスコードの確認
 if response.status_code == 200:
-    data = response.json()
+    try:
+        data = response.json()
+    except json.JSONDecodeError:
+        print(f"Failed to decode JSON from {target_url}. Response: {response.text[:200]}")  # JSONでないレスポンス
+        exit(1)
+
     # 'hasPart'に該当する部分を抽出
-    has_part = data.get('http://purl.org/dc/terms/hasPart', [])
-    print(has_part)
-    
-    # 'hasPart'の内容を一覧表示
-    for index, part in enumerate(has_part, start=1):
-        print(f"{index}. {part}")
+    has_part = data.get(base_url, {}).get("http://purl.org/dc/terms/hasPart", [])
+
+    # hasPartが空でない場合はその内容を表示し、再帰的にデータを取得
+    if has_part:
+        for item in has_part:
+            child_url = item["value"] + ".json"
+            print(f"Starting recursive fetching from: {child_url}")
+            get_child_data(child_url)
+    else:
+        print("No 'hasPart' found in the initial data.")
 else:
     print(f"データの取得に失敗しました。ステータスコード: {response.status_code}")
-
-# 提供されたJSONデータ（response）の一部
-data = {
-    "https://uedayou.net/loa/神奈川県": {
-        "http://purl.org/dc/terms/hasPart": [
-            {
-                "type": "uri",
-                "value": "https://uedayou.net/loa/神奈川県愛甲郡愛川町"
-            },
-            {
-                "type": "uri",
-                "value": "https://uedayou.net/loa/神奈川県愛甲郡清川村"
-            },
-            {
-                "type": "uri",
-                "value": "https://uedayou.net/loa/神奈川県綾瀬市"
-            },
-            {
-                "type": "uri",
-                "value": "https://uedayou.net/loa/神奈川県伊勢原市"
-            },
-            {
-                "type": "uri",
-                "value": "https://uedayou.net/loa/神奈川県横須賀市"
-            },
-            {
-                "type": "uri",
-                "value": "https://uedayou.net/loa/神奈川県横浜市"
-            },
-            {
-                "type": "uri",
-                "value": "https://uedayou.net/loa/神奈川県海老名市"
-            },
-            {
-                "type": "uri",
-                "value": "https://uedayou.net/loa/神奈川県鎌倉市"
-            },
-            {
-                "type": "uri",
-                "value": "https://uedayou.net/loa/神奈川県茅ケ崎市"
-            },
-            {
-                "type": "uri",
-                "value": "https://uedayou.net/loa/神奈川県厚木市"
-            },
-            # 他のURLもここに追加
-        ]
-    }
-}
-
-# 'hasPart'の内容を抽出して一覧表示
-#has_part = data["https://uedayou.net/loa/神奈川県"].get('http://purl.org/dc/terms/hasPart', [])
-
-# 'hasPart'の内容を一覧表示
-#for index, part in enumerate(has_part, start=1):
-#    print(f"{index}. {part['value']}")
+    print(f"Response Headers: {response.headers}")
