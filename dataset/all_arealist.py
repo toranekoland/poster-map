@@ -18,12 +18,7 @@ visited_urls = set()
 columns = ['Full URL', 'Stripped URL', 'Level']
 
 # 再帰的にデータを取得する関数
-def get_child_data(url, level=0, max_depth=3):  # levelパラメータを追加して再帰階層を追跡
-    # 再帰深さがmax_depthを超えたら処理を終了
-    if level > max_depth:
-        return
-
-    # すでにこのURLを取得している場合はスキップ
+def get_child_data(url, level=0, max_depth=3, output_path=None):  # levelパラメータを追加して再帰階層を追跡
     if url in visited_urls:
         return
     
@@ -47,16 +42,17 @@ def get_child_data(url, level=0, max_depth=3):  # levelパラメータを追加�
     if has_part:
         # **has_partが存在した場合のみURLをall_urlsに追加**
         stripped_url = url.replace(base_url, "")
-        #all_urls.append([url, stripped_url, level])
 
         df = pd.DataFrame([[url, stripped_url, level]], columns=columns)
         df.to_csv(output_path, mode='a', header=False, index=False, encoding='utf-8')
         logger.info(f"Appended URL: {url}, stripped_url: {stripped_url},Level: {level}")
-
+        # 再帰深さがmax_depthを超えたら処理を終了
+        if level >= max_depth:
+            return
         # 子供のデータを再帰的に取得
         for item in has_part:
             child_url = item["value"] + ".json"
-            get_child_data(child_url,level + 1,max_depth)  # 再帰的に処理
+            get_child_data(child_url,level + 1,max_depth, output_path)  # 再帰的に処理
     else:
         pass
 
@@ -89,7 +85,7 @@ def main(target_str, max_depth, output_path):
       if has_part:
           for item in has_part:
               child_url = item["value"]
-              get_child_data(child_url, level=1, max_depth=max_depth)
+              get_child_data(child_url, level=1, max_depth=max_depth, output_path=output_path)
       else:
           pass
   else:
