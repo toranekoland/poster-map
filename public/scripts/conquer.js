@@ -74,6 +74,19 @@ function getGeoJsonStyle(value) {
   }
 }
 
+// area_key を元に緯度経度を取得する関数
+function getCoordinatesByAreaKey(area_key, areaList) {
+  // area_key が一致するオブジェクトを検索
+  const area = areaList.find(item => item.area_key === area_key);
+  if (area) {
+      // 緯度と経度を返す
+      return { lat: parseFloat(area.lat), lng: parseFloat(area.long) };
+  } else {
+      console.log('指定したarea_keyが見つかりません。');
+      return null;
+  }
+}
+
 function getAreakeyFromUrlParam() {
   const params = new URL(document.location.href).searchParams
   const area_key = params.get("area_key")
@@ -135,10 +148,9 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerbloc
     legend().addTo(map);
   } else {
     // area_keyが定義されている場合、詳細マップ(ポスター枚数による塗分け)を表示する
-    console.log(area_key)
-    console.log(conquerblock)
-    const area = conquerblock.find(item => item.area_key === area_key);
-    console.log(area)
+    const coordinates = getCoordinatesByAreaKey(area_key, conquerblock)
+    console.log(`緯度: ${coordinates.lat}, 経度: ${coordinates.lng}`);
+    map.setView([coordinates.lat, coordinates.lng], 12);
     for (let [key, conquer] of Object.entries(conquerdata)) {
       const geoJsonUrl = `https://uedayou.net/loa/${pref}${conquer['subarea_name']}.geojson`;
       fetch(geoJsonUrl)
