@@ -20,6 +20,8 @@ curl -sL "https://script.google.com/macros/s/AKfycbyaV4I5c6KdHMSwdBlLD-HbQM5wXPi
 
 # ポスティングデータをblockごとに分割
 python3 bin/conquercsv2json_small.py public/data/conquerlist.csv public/data/conquerblock.csv public/data/
+# エリアごとに集計
+python3 bin/summarize_areatotal.py ./public/data/conquerareatotal.json
 
 # 掲示板ピンマップデータをダウンロード
 curl -sL "https://script.google.com/macros/s/AKfycbyaV4I5c6KdHMSwdBlLD-HbQM5wXPiZVlsUMEOSh__tWhlXoG621NuJrd6HIwjT_Cfn/exec?sheetName=test" > public/data/all.csv
