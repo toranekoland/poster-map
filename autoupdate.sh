@@ -8,6 +8,7 @@ git pull
 # arealist update
 curl -sL "https://script.google.com/macros/s/AKfycbyaV4I5c6KdHMSwdBlLD-HbQM5wXPiZVlsUMEOSh__tWhlXoG621NuJrd6HIwjT_Cfn/exec?sheetName=arealist" > public/data/arealist.csv
 python3 bin/arealistcsv2json.py public/data/arealist.csv public/data/arealist.json
+cp -p public/data/arealist.csv ./
 
 # areablock update
 curl -sL "https://script.google.com/macros/s/AKfycbyaV4I5c6KdHMSwdBlLD-HbQM5wXPiZVlsUMEOSh__tWhlXoG621NuJrd6HIwjT_Cfn/exec?sheetName=areablock" > public/data/areablock.csv
