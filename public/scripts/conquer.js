@@ -8,68 +8,70 @@ const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 function legend() {
-  var control = L.control({ position: 'topright' });
+  var control = L.control({position: 'topright'});
   control.onAdd = function () {
 
-    var div = L.DomUtil.create('div', 'info legend')
-    grades = [1, 0.75, 0.5, 0.25, 0]
+      var div = L.DomUtil.create('div', 'info legend')
+      grades = milestones.slice().reverse();
 
-    div.innerHTML += '<p>凡例</p>';
+      div.innerHTML += '<p>凡例</p>';
 
-    var legendInnerContainerDiv = L.DomUtil.create('div', 'legend-inner-container', div);
-    legendInnerContainerDiv.innerHTML += '<div class="legend-gradient"></div>';
+      var legendInnerContainerDiv = L.DomUtil.create('div', 'legend-inner-container', div);
+      legendInnerContainerDiv.innerHTML += '<div class="legend-gradient"></div>';
 
-    var labelsDiv = L.DomUtil.create('div', 'legend-labels', legendInnerContainerDiv);
-    for (var i = 0; i < grades.length; i++) {
-      labelsDiv.innerHTML += '<span>' + grades[i] * 100 + '%</span>';
-    }
-    return div;
+      var labelsDiv = L.DomUtil.create('div', 'legend-labels', legendInnerContainerDiv);
+      for (var i = 0; i < grades.length; i++) {
+        labelsDiv.innerHTML += '<span>' + grades[i] + '枚</span>';
+      }
+      console.log(div)
+      return div;
   };
 
   return control
 }
 
-function getProgressColor(percentage) {
+function getProgressColor(value) {
 
-  // Define the color stops
-  const colorStops = [
-    { pct: 0.0, color: { r: 254, g: 237, b: 222 } }, // #feedde
-    { pct: 0.25, color: { r: 253, g: 190, b: 133 } }, // #fdbe85
-    { pct: 0.5, color: { r: 253, g: 141, b: 60 } }, // #fd8d3c
-    { pct: 0.75, color: { r: 230, g: 85, b: 13 } }, // #e6550d
-    { pct: 0.999, color: { r: 166, g: 54, b: 3 } }, // #a63603
-    { pct: 1.0, color: { r: 150, g: 0, b: 73 } } // #a63603
-  ];
+  let lower = milestones[0];
+  let upper = milestones[milestones.length - 1];
 
-  // Ensure percentage is within bounds
-  percentage = Math.max(0, Math.min(1, percentage));
-
-  // Find the two closest color stops
-  let lower = colorStops[0];
-  let upper = colorStops[colorStops.length - 1];
-
-  for (let i = 1; i < colorStops.length; i++) {
-    if (percentage <= colorStops[i].pct) {
-      upper = colorStops[i];
-      lower = colorStops[i - 1];
-      break;
+  // valueが上限を超える場合、upperを最大のmilestoneに設定
+  if (value >= upper) {
+    upper = milestones[milestones.length - 1];
+    lower = milestones[milestones.length - 2];
+  } else {
+    for (let i = 1; i < milestones.length; i++) {
+      if (value <= milestones[i]) {
+        upper = milestones[i];
+        lower = milestones[i - 1];
+        break;
+      }
     }
   }
 
-  // Calculate the interpolated color
-  const rangePct = (percentage - lower.pct) / (upper.pct - lower.pct);
-  const r = Math.round(lower.color.r + rangePct * (upper.color.r - lower.color.r));
-  const g = Math.round(lower.color.g + rangePct * (upper.color.g - lower.color.g));
-  const b = Math.round(lower.color.b + rangePct * (upper.color.b - lower.color.b));
+  // 進捗を0から1に変換する
+  const rangePct = (value - lower) / (upper - lower);
+  // 進捗が範囲外に出ないように制限
+  const clampedRangePct = Math.min(Math.max(rangePct, 0), 1);
 
-  // Return the color as a string
+  // 青系のグラデーションの色設定
+  // 0は薄い青、10000は濃い青
+  const blueStart = { r: 128, g: 224, b: 255 }; // 明るい青 (薄い青)
+  const blueEnd = { r: 0, g: 0, b: 255 }; // 濃い青 (濃い青)
+
+  const r = Math.round(blueStart.r + clampedRangePct * (blueEnd.r - blueStart.r));
+  const g = Math.round(blueStart.g + clampedRangePct * (blueEnd.g - blueStart.g));
+  const b = Math.round(blueStart.b + clampedRangePct * (blueEnd.b - blueStart.b));
+  console.log('color:','r=',r,'g=',g,'b=',b)
+
   return `rgb(${r}, ${g}, ${b})`;
 }
 
-function getGeoJsonStyle(progress) {
+function getGeoJsonStyle(value) {
+  console.log('GetGeoJsonStyle:',value)
   return {
     color: 'black',
-    fillColor: getProgressColor(progress),
+    fillColor: getProgressColor(value),
     fillOpacity: 0.7,
     weight: 2,
   }
@@ -78,7 +80,6 @@ function getGeoJsonStyle(progress) {
 function getAreakeyFromUrlParam() {
   const params = new URL(document.location.href).searchParams
   const area_key = params.get("area_key")
-  console.log(area_key)
   return area_key
 }
 
@@ -103,6 +104,8 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerbloc
   if (area_key === null) {
     // area_keyが定義されていない場合、全体マップ（ポリゴンによる描写とクリックしてリンク先に飛ぶ）を表示する
     for (let [key, blockdata] of Object.entries(conquerblock)) {
+      console.log(key)
+      console.log(blockdata)
       const geoJsonUrl = `https://uedayou.net/loa/${pref}${blockdata['area_name']}.geojson`;
       fetch(geoJsonUrl)
         .then((response) => {
@@ -135,12 +138,8 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerbloc
     legend().addTo(map);
   } else {
     // area_keyが定義されている場合、詳細マップ(ポスター枚数による塗分け)を表示する
-    console.log('area_key is defined:', area_key);
     for (let [key, conquer] of Object.entries(conquerdata)) {
-      console.log(key)
-      console.log(conquer)
       const geoJsonUrl = `https://uedayou.net/loa/${pref}${conquer['subarea_name']}.geojson`;
-      console.log(geoJsonUrl)
       fetch(geoJsonUrl)
       .then((response) => {
         if (!response.ok) {
@@ -150,7 +149,7 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerbloc
       })
       .then((data) => {
         const polygon = L.geoJSON(data, {
-          style: getGeoJsonStyle(progress[key]),
+          style: getGeoJsonStyle(conquer['total_posting']),
         });
         polygon.bindPopup(`<b>${conquer['subarea_name']}</b><br>トータル: ${conquer['total_posting']}枚<br>最近: ${conquer['recently_posting']}枚`);
         polygon.addTo(map);
@@ -158,8 +157,8 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerbloc
       .catch((error) => {
         console.error('Error fetching geojson:', error);
       });
-
     }
+    legend().addTo(map);
   }
 
 }).catch((error) => {

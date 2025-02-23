@@ -30,7 +30,7 @@ async function getConquerblock() {
 async function getConquerdata(block = null) {
   let response
   if (block == null) {
-    response = await fetch('/data/conquer.json')
+    response = await fetch('/data/conquerlist.json')
   } else {
     response = await fetch(`/data/conquer/${block}.json`)
     }
@@ -127,3 +127,4 @@ const grayIcon = L.icon({
   className: "icon-gray",
 });
 
+const milestones = [0, 100, 500, 1000, 5000]; //進捗枚数
