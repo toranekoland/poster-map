@@ -19,6 +19,12 @@ columns = ['Full URL', 'Stripped URL', 'Level']
 
 # 再帰的にデータを取得する関数
 def get_child_data(url, level=0, max_depth=3, output_path=None):  # levelパラメータを追加して再帰階層を追跡
+    #logger.info(f"Processing URL: {url}, Level: {level}, Max Depth: {max_depth}")
+
+    if level >= max_depth:
+        #logger.info(f"Max depth reached for URL: {url}, Level: {level}")
+        return
+
     if url in visited_urls:
         return
     
@@ -45,14 +51,12 @@ def get_child_data(url, level=0, max_depth=3, output_path=None):  # levelパラ�
 
         df = pd.DataFrame([[url, stripped_url, level]], columns=columns)
         df.to_csv(output_path, mode='a', header=False, index=False, encoding='utf-8')
-        logger.info(f"Appended URL: {url}, stripped_url: {stripped_url},Level: {level}")
-        # 再帰深さがmax_depthを超えたら処理を終了
-        if level >= max_depth:
-            return
+        logger.info(f"Write File {url}, {stripped_url},{level}")
+
         # 子供のデータを再帰的に取得
         for item in has_part:
-            child_url = item["value"] + ".json"
-            get_child_data(child_url,level + 1,max_depth, output_path)  # 再帰的に処理
+            child_url = item["value"]
+            get_child_data(child_url, level + 1, max_depth, output_path)  # 再帰的に処理
     else:
         pass
 
@@ -76,7 +80,7 @@ def main(target_str, max_depth, output_path):
       # **初期データ部分もall_urlsに追加**（階層0として追加）
       df = pd.DataFrame([[target_url, "", 0]], columns=columns)
       df.to_csv(output_path, mode='w', header=True, index=False, encoding='utf-8')
-      logger.info(f"Appended Initial URL: {target_url}, Level: 0")
+      logger.info(f"Write File {url}, ,0")
 
       # 'hasPart'に該当する部分を抽出
       has_part = data.get(url, {}).get("http://purl.org/dc/terms/hasPart", [])
@@ -87,7 +91,8 @@ def main(target_str, max_depth, output_path):
               child_url = item["value"]
               get_child_data(child_url, level=1, max_depth=max_depth, output_path=output_path)
       else:
-          pass
+        pass
+
   else:
       print(f"データの取得に失敗しました。ステータスコード: {response.status_code}")
       print(f"Response Headers: {response.headers}")
