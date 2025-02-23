@@ -74,45 +74,18 @@ function getGeoJsonStyle(value) {
   }
 }
 
-// area_key を元に緯度経度を取得する関数
-function getCoordinatesByAreaKey(area_key, areaList) {
-  // area_key が一致するオブジェクトを検索
-  console.log('areakey',area_key)
-  console.log('arealist',areaList)
-
-  const area = areaList.find(item => item.area_key === area_key);
-  if (area) {
-      // 緯度と経度を返す
-      console.log(area)
-      console.log('getCoordinatesByAreaKey',area_key)
-      return { lat: parseFloat(area.lat), lng: parseFloat(area.long) };
-  } else {
-      console.log('指定したarea_keyが見つかりません。');
-      return null;
-  }
-}
-
-function getAreakeyFromUrlParam() {
-  const params = new URL(document.location.href).searchParams
-  const area_key = params.get("area_key")
-  return area_key
-}
-
-function getPrefFromUrlParam() {
-  const params = new URL(document.location.href).searchParams
-  const pref = params.get("pref")
-  return pref
+function getParamFromUrl(paramName) {
+  const params = new URL(document.location.href).searchParams;
+  return params.get(paramName);
 }
 
 let areaList;
 let progress;
-const area_key = getAreakeyFromUrlParam()
-const pref = getPrefFromUrlParam()
-
-//L.marker([35.400550665, 139.37576707])
-//  .addTo(map)
-//  .bindTooltip("テストマーカー", { permanent: true, direction: 'top' })
-//  .openTooltip();
+const area_key = getParamFromUrl("area_key");
+const pref = getParamFromUrl("pref");
+const lat = getParamFromUrl("lat");
+const lng = getParamFromUrl("lng");
+console.log(area_key, pref, lat, lng); // それぞれの値を確認
 
 Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerblock(),getConquerdata(area_key)]).then(function (res) {
   areaList = res[0];
@@ -146,6 +119,8 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerbloc
           marker.on('click', function () {
             const currentUrl = new URL(window.location.href);
             currentUrl.searchParams.set('area_key', blockdata['area_key']);
+            currentUrl.searchParams.set('lat', centroid.lat);
+            currentUrl.searchParams.set('lng', centroid.lng);
             window.location.href = currentUrl.toString();
           })
           polygon.addTo(map);
@@ -159,10 +134,8 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerbloc
     legend().addTo(map);
   } else {
     // area_keyが定義されている場合、詳細マップ(ポスター枚数による塗分け)を表示する
-    const coordinates = getCoordinatesByAreaKey(area_key, conquerblock)
-    console.log(coordinates);
-    console.log(`緯度: ${coordinates.lat}, 経度: ${coordinates.lng}`);
-    map.setView([coordinates.lat, coordinates.lng], 12);
+    console.log(`緯度: ${lat}, 経度: ${lng}`);
+    map.setView([lat, lng], 14);
     for (let [key, conquer] of Object.entries(conquerdata)) {
       const geoJsonUrl = `https://uedayou.net/loa/${pref}${conquer['subarea_name']}.geojson`;
       fetch(geoJsonUrl)
