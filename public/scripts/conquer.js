@@ -82,20 +82,15 @@ function getParamFromUrl(paramName) {
 let areaList;
 let progress;
 const area_key = getParamFromUrl("area_key");
+const area_id = getParamFromUrl("area_id");
 const pref = getParamFromUrl("pref");
 const lat = getParamFromUrl("lat");
 const lng = getParamFromUrl("lng");
-console.log(area_key, pref, lat, lng); // それぞれの値を確認
 
-Promise.all([getAreaList(), getProgress(), getProgressCountdown(), getConquerblock(), getConquerdata(area_key), getConquerareatotal()]).then(function (res) {
-  areaList = res[0];
-  progress = res[1];
-  progressCountdown = res[2];
-  conquerblock = res[3];
-  conquerdata = res[4];
-  conquerareatotal = res[5];
-
-  console.log(conquerareatotal)
+Promise.all([getConquerblock(), getConquerdata(area_key), getConquerareatotal()]).then(function (res) {
+  conquerblock = res[0];
+  conquerdata = res[1];
+  conquerareatotal = res[2];
 
   if (area_key === null) {
     // area_keyが定義されていない場合、全体マップ（ポリゴンによる描写とクリックしてリンク先に飛ぶ）を表示する
@@ -137,6 +132,7 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(), getConquerblo
           marker.on('click', function () {
             const currentUrl = new URL(window.location.href);
             currentUrl.searchParams.set('area_key', blockdata['area_key']);
+            currentUrl.searchParams.set('area_id', blockdata['area_id']);
             currentUrl.searchParams.set('lat', centroid.lat);
             currentUrl.searchParams.set('lng', centroid.lng);
             window.location.href = currentUrl.toString();
@@ -151,7 +147,6 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(), getConquerblo
     legend().addTo(map);
   } else {
     // area_keyが定義されている場合、詳細マップ(ポスター枚数による塗分け)を表示する
-    console.log(`緯度: ${lat}, 経度: ${lng}`);
     map.setView([lat, lng], 14);
     for (let [key, conquer] of Object.entries(conquerdata)) {
       const geoJsonUrl = `https://uedayou.net/loa/${pref}${conquer['subarea_name']}.geojson`;
@@ -173,6 +168,7 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(), getConquerblo
           console.error('Error fetching geojson:', error);
         });
     }
+    areatotalBox((conquerareatotal[area_id]), 'topright').addTo(map)
     legend().addTo(map);
   }
 
