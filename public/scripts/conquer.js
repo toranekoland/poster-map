@@ -104,6 +104,11 @@ let progress;
 const area_key = getAreakeyFromUrlParam()
 const pref = getPrefFromUrlParam()
 
+//L.marker([35.400550665, 139.37576707])
+//  .addTo(map)
+//  .bindTooltip("テストマーカー", { permanent: true, direction: 'top' })
+//  .openTooltip();
+
 Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerblock(),getConquerdata(area_key)]).then(function (res) {
   areaList = res[0];
   progress = res[1];
@@ -124,19 +129,20 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(),getConquerbloc
         })
         .then((data) => {
           const polygon = L.geoJSON(data, {
-            style: getGeoJsonStyle(progress[key]),
+            style: getGeoJsonStyle(key),
           });
           const centroid = polygon.getBounds().getCenter();  // ポリゴンの境界ボックスの中心を取得
+          console.log("key:", key, blockdata['area_name']);
           console.log("中心点の緯度経度:", centroid.lat, centroid.lng);
-            // クリックして詳細マップへ
-          polygon.on('click', function () {
+          const marker = L.marker([centroid.lat, centroid.lng]).addTo(map);
+          marker.bindTooltip(blockdata['area_name'], { permanent: true, direction: 'top' }).openTooltip();
+
+          // マーカーをクリックして詳細マップへ
+          marker.on('click', function () {
             const currentUrl = new URL(window.location.href);
             currentUrl.searchParams.set('area_key', blockdata['area_key']);
             window.location.href = currentUrl.toString();
           })
-          polygon.bindPopup(`<b>${blockdata['area_name']}</b><br>`);
-          polygon.on('mouseover',function(e){this.openPopup();});
-          polygon.on('mouseout',function(e){this.closePopup();});
           polygon.addTo(map);
         })
         .catch((error) => {
