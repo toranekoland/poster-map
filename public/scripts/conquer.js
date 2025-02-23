@@ -87,12 +87,15 @@ const lat = getParamFromUrl("lat");
 const lng = getParamFromUrl("lng");
 console.log(area_key, pref, lat, lng); // それぞれの値を確認
 
-Promise.all([getAreaList(), getProgress(), getProgressCountdown(), getConquerblock(), getConquerdata(area_key)]).then(function (res) {
+Promise.all([getAreaList(), getProgress(), getProgressCountdown(), getConquerblock(), getConquerdata(area_key), getConquerareatotal()]).then(function (res) {
   areaList = res[0];
   progress = res[1];
   progressCountdown = res[2];
   conquerblock = res[3];
   conquerdata = res[4];
+  conquerareatotal = res[5];
+
+  console.log(conquerareatotal)
 
   if (area_key === null) {
     // area_keyが定義されていない場合、全体マップ（ポリゴンによる描写とクリックしてリンク先に飛ぶ）を表示する
@@ -108,9 +111,7 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(), getConquerblo
       .then((data) => {
         const polygon = L.geoJSON(data);
         const centroid = polygon.getBounds().getCenter();  // ポリゴンの境界ボックスの中心を取得
-        console.log("中心点の緯度経度:", centroid.lat, centroid.lng);
         map.setView([centroid.lat, centroid.lng], 11);
-
       })
       .catch((error) => {
         console.error('Error fetching geojson:', error);
@@ -125,12 +126,13 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(), getConquerblo
           return response.json();
         })
         .then((data) => {
+          console.log(key,blockdata['area_id'])
+          console.log(blockdata['area_key'],blockdata['area_name'])
+          console.log(conquerareatotal[blockdata['area_id']])
           const polygon = L.geoJSON(data, {
-            style: getGeoJsonStyle(key),
+            style: getGeoJsonStyle(conquerareatotal[blockdata['area_id']]),
           });
           const centroid = polygon.getBounds().getCenter();  // ポリゴンの境界ボックスの中心を取得
-          console.log("key:", key, blockdata['area_name']);
-          console.log("中心点の緯度経度:", centroid.lat, centroid.lng);
           const marker = L.marker([centroid.lat, centroid.lng]).addTo(map);
           marker.bindTooltip(blockdata['area_name'], { permanent: true, direction: 'bottom', offset: [-15, 40] }).openTooltip();
 
@@ -148,7 +150,7 @@ Promise.all([getAreaList(), getProgress(), getProgressCountdown(), getConquerblo
           console.error('Error fetching geojson:', error);
         });
     }
-    progressBox((progress['total'] * 100).toFixed(2), 'topright').addTo(map)
+    areatotalBox((conquerareatotal['total'] ), 'topright').addTo(map)
     progressBoxCountdown((parseInt(progressCountdown['total'])), 'topright').addTo(map)
     legend().addTo(map);
   } else {

@@ -127,4 +127,25 @@ async function getConquerdata(block = null) {
   return response.json();
 }
 
+async function getConquerareatotal() {
+  const conqueareatotalResponse = await fetch('/data/conquerareatotal.json');
+  const conqueareatotal = await conqueareatotalResponse.json();
+  return conqueareatotal;
+}
+
+function areatotalBox(totalValue, position){
+  var control = L.control({position: position});
+  control.onAdd = function () {
+
+      var div = L.DomUtil.create('div', 'info progress')
+
+      div.innerHTML += '<p>枚数 (全域)</p>'
+      div.innerHTML += `<p><span class="progressValue">${totalValue}</span>枚</p>`
+
+      return div;
+  };
+
+  return control
+}
+
 const milestones = [0, 100, 500, 1000, 5000]; //進捗枚数
