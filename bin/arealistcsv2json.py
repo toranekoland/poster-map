@@ -9,6 +9,7 @@ import os
 def main(input_path, output_path):
 
     inputdata = pd.read_csv(input_path)
+    inputdata = inputdata[['area_id', 'area_name', 'area_block']] # area_id, area_name,area_blockだけにする
     inputdata = inputdata.set_index('area_id')
     json_data = inputdata.to_json(output_path, orient='index',force_ascii=False)
     print(f"File saved to {output_path}")
