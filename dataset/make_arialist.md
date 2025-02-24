@@ -73,3 +73,6 @@ python3 all_arealist.py "神奈川県愛甲郡清川村" 1 "kanagawa/kiyokawa.cs
 
 ## 手作業で実施
 python3 all_arealist.py "神奈川県横浜市戸塚区" 3 "kanagawa/totsuka.csv"
+python3 all_arealist.py "神奈川県鎌倉市" 3 "kanagawa/kamakura.csv"
+python3 all_arealist.py "神奈川県愛甲郡愛川町" 3 "kanagawa/aikawa.csv"
+python3 all_arealist.py "神奈川県足柄上郡松田町" 3 "kanagawa/matsuda.csv"
