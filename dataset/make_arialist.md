@@ -71,13 +71,16 @@ python3 all_arealist.py "神奈川県愛甲郡清川村" 1 "kanagawa/kiyokawa.cs
 
 
 ## 手作業で実施
-#完了 python3 all_arealist.py "神奈川県横浜市戸塚区" 3 "kanagawa/totsuka.csv"
-#完了 python3 all_arealist.py "神奈川県鎌倉市" 3 "kanagawa/kamakura.csv"
-python3 all_arealist.py "神奈川県愛甲郡愛川町" 3 "kanagawa/aikawa.csv"
-#完了 python3 all_arealist.py "神奈川県足柄上郡松田町" 3 "kanagawa/matsuda.csv"
-#完了 python3 all_arealist.py "神奈川県足柄上郡山北町" 3 "kanagawa/yamakita.csv"
+##完了 python3 all_arealist.py "神奈川県横浜市戸塚区" 3 "kanagawa/totsuka.csv"
+##完了 python3 all_arealist.py "神奈川県鎌倉市" 3 "kanagawa/kamakura.csv"
+##完了 python3 all_arealist.py "神奈川県足柄上郡松田町" 3 "kanagawa/matsuda.csv"
+##完了 python3 all_arealist.py "神奈川県足柄上郡山北町" 3 "kanagawa/yamakita.csv"
+#完了 python3 all_arealist.py "神奈川県愛甲郡愛川町" 3 "kanagawa/aikawa.csv"
+#完了python3 all_arealist.py "神奈川県足柄上郡大井町" 3 "kanagawa/ohi.csv"
 python3 all_arealist.py "神奈川県足柄上郡中井町" 3 "kanagawa/nakai.csv"
-python3 all_arealist.py "神奈川県足柄上郡大井町" 3 "kanagawa/ohi.csv"
+python3 all_arealist.py "神奈川県足柄上郡開成町" 3 "kanagawa/kaisei.csv"
+python3 all_arealist.py "神奈川県足柄下郡箱根町" 3 "kanagawa/hakone.csv"
+python3 all_arealist.py "神奈川県横浜市都筑区" 3 "kanagawa/tsuzuki.csv"
 
 
 ## すべて出来上がったらマージ
