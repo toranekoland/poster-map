@@ -56,23 +56,23 @@ def get_child_data(url, level=0, max_depth=3, output_path=None):  # levelパラ�
     has_part = data.get(url, {}).get("http://purl.org/dc/terms/hasPart", [])
     
     if has_part:
+        # 子供のデータを再帰的に取得
+        for item in has_part:
+            child_url = item["value"]
+            if child_url in visited_urls:
+                logger.info(f"再帰処理しない {child_url}")
+            else:
+                logger.info(f"再帰処理 {child_url}")
+                get_child_data(child_url, level + 1, max_depth, output_path)  # 再帰的に処理
         stripped_url = url.replace(base_url, "")
         if url in visited_urls:
             # すでにデータに存在する場合はファイルへの書き込みをスキップする
             logger.info(f"Exist File {url}, {stripped_url},{level}")
         else:
+            # なければ追記する
             df = pd.DataFrame([[url, stripped_url, level]], columns=columns)
             df.to_csv(output_path, mode='a', header=False, index=False, encoding='utf-8')
             logger.info(f"Write File {url}, {stripped_url},{level}")
-
-        # 子供のデータを再帰的に取得
-        for item in has_part:
-            child_url = item["value"]
-            if child_url in visited_urls:
-                logger.info(f"再帰処理 {child_url}")
-                get_child_data(child_url, level + 1, max_depth, output_path)  # 再帰的に処理
-            else:
-                logger.info(f"再帰処理しない {child_url}")
     else:
         pass
 
@@ -82,6 +82,10 @@ def get_child_data(url, level=0, max_depth=3, output_path=None):  # levelパラ�
 def main(target_str, max_depth, output_path):
     visited_urls.update(load_visited_urls(output_path))  # 既存のURLを読み込んでセットに追加
     print(visited_urls)
+    if not visited_urls:
+        df = pd.DataFrame(columns=columns)
+        df.to_csv(output_path, mode='w', header=True, index=False, encoding='utf-8')
+        logger.info(f"Write File {output_path}")
 
     # 初期データ取得
     url = f"{base_url}{target_str}"
@@ -100,14 +104,6 @@ def main(target_str, max_depth, output_path):
         except json.JSONDecodeError:
             sys.exit(1)
 
-        if url in visited_urls:
-            # すでに0階層目がデータに存在する場合はファイル作成をスキップする
-            pass
-        else:
-            df = pd.DataFrame([[url, "", 0]], columns=columns)
-            df.to_csv(output_path, mode='w', header=True, index=False, encoding='utf-8')
-            logger.info(f"Write File {url}, ,0")
-
         # 'hasPart'に該当する部分を抽出
         has_part = data.get(url, {}).get("http://purl.org/dc/terms/hasPart", [])
 
@@ -116,8 +112,20 @@ def main(target_str, max_depth, output_path):
             for item in has_part:
                 child_url = item["value"]
                 get_child_data(child_url, level=1, max_depth=max_depth, output_path=output_path)
+            if url in visited_urls:
+                # すでにデータに存在する場合はファイルへの書き込みをスキップする
+                logger.info(f"Exist File {url}, "",{level}")
+            else:
+                df = pd.DataFrame([[url, "", 0]], columns=columns)
+                df.to_csv(output_path, mode='w', header=True, index=False, encoding='utf-8')
+                logger.info(f"Write File {url}, ,0")
+
+
+
         else:
             pass
+
+
 
     else:
         print(f"データの取得に失敗しました。ステータスコード: {response.status_code}")
