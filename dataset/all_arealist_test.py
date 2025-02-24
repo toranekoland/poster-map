@@ -33,10 +33,7 @@ def get_child_data(url, level=0, max_depth=3, output_path=None):  # levelパラ�
         #logger.info(f"Max depth reached for URL: {url}, Level: {level}")
         return
 
-    if url in visited_urls:
-        return
-    
-    visited_urls.add(url)  # 取得済みURLを記録
+    #visited_urls.add(url)  # 取得済みURLを記録
     
     target_url = f"{url}.json"
     try:
@@ -59,17 +56,23 @@ def get_child_data(url, level=0, max_depth=3, output_path=None):  # levelパラ�
     has_part = data.get(url, {}).get("http://purl.org/dc/terms/hasPart", [])
     
     if has_part:
-        # **has_partが存在した場合のみURLをall_urlsに追加**
         stripped_url = url.replace(base_url, "")
-
-        df = pd.DataFrame([[url, stripped_url, level]], columns=columns)
-        df.to_csv(output_path, mode='a', header=False, index=False, encoding='utf-8')
-        logger.info(f"Write File {url}, {stripped_url},{level}")
+        if url in visited_urls:
+            # すでにデータに存在する場合はファイルへの書き込みをスキップする
+            logger.info(f"Exist File {url}, {stripped_url},{level}")
+        else:
+            df = pd.DataFrame([[url, stripped_url, level]], columns=columns)
+            df.to_csv(output_path, mode='a', header=False, index=False, encoding='utf-8')
+            logger.info(f"Write File {url}, {stripped_url},{level}")
 
         # 子供のデータを再帰的に取得
         for item in has_part:
             child_url = item["value"]
-            get_child_data(child_url, level + 1, max_depth, output_path)  # 再帰的に処理
+            if child_url in visited_urls:
+                logger.info(f"再帰処理 {child_url}")
+                get_child_data(child_url, level + 1, max_depth, output_path)  # 再帰的に処理
+            else:
+                logger.info(f"再帰処理しない {child_url}")
     else:
         pass
 
@@ -101,7 +104,6 @@ def main(target_str, max_depth, output_path):
             # すでに0階層目がデータに存在する場合はファイル作成をスキップする
             pass
         else:
-            # **初期データ部分もall_urlsに追加**（階層0として追加）
             df = pd.DataFrame([[url, "", 0]], columns=columns)
             df.to_csv(output_path, mode='w', header=True, index=False, encoding='utf-8')
             logger.info(f"Write File {url}, ,0")
