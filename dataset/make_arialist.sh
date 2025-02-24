@@ -3,24 +3,61 @@ set -euo pipefail
 
 # 神奈川県の地名リストを出力（負荷が高いので、一回だけね）
 
-#python3 all_arealist.py "神奈川県" 1 kanagawa.csv
-#python3 all_arealist.py "神奈川県横浜市" 1 kanagawa-yokohama.csv
-#python3 all_arealist.py "神奈川県川崎市" 1 kanagawa-kawasaki.csv
-#python3 all_arealist.py "神奈川県相模原市" 1 kanagawa-sagamihara.csv
-
-# csvを加工してarealist.csvを作るのです
-# area_id,area_name,area_block area_blockは任意にグルーピングしてください
-
-python3 all_arealist.py "神奈川県川崎市多摩区" 3 "kanagawa/tama.csv"
-python3 all_arealist.py "神奈川県川崎市宮前区" 3 "kanagawa/miyamae.csv"
-python3 all_arealist.py "神奈川県川崎市幸区" 3 "kanagawa/saiwai.csv"
-python3 all_arealist.py "神奈川県川崎市中原区" 3 "kanagawa/nakahara.csv"
-
-#失敗してやり直す分
-#python3 all_arealist.py "神奈川県鎌倉市" 3 "kanagawa/kamakura.csv"
-#python3 all_arealist.py "神奈川県横浜市戸塚区" 3 "kanagawa/totsuka.csv"
-#python3 all_arealist.py "神奈川県川崎市川崎区" 3 "kanagawa/kawasaki.csv"
-
-#成功した分
-#python3 all_arealist.py "神奈川県川崎市高津区" 3 "kanagawa/takatsu.csv"
-#python3 all_arealist.py "神奈川県横浜市都筑区" 3 "kanagawa/tsuzuki.csv"
+python3 all_arealist.py "神奈川県横浜市鶴見区" 2 "kanagawa/tsurumi.csv"
+python3 all_arealist.py "神奈川県横浜市神奈川区" 2 "kanagawa/kanagawa.csv"
+python3 all_arealist.py "神奈川県横浜市西区" 2 "kanagawa/nishi.csv"
+python3 all_arealist.py "神奈川県横浜市中区" 2 "kanagawa/naka.csv"
+python3 all_arealist.py "神奈川県横浜市南区" 2 "kanagawa/yokohamaminami.csv"
+python3 all_arealist.py "神奈川県横浜市保土ケ谷区" 2 "kanagawa/hodogaya.csv"
+python3 all_arealist.py "神奈川県横浜市磯子区" 2 "kanagawa/isogo.csv"
+python3 all_arealist.py "神奈川県横浜市金沢区" 2 "kanagawa/kanazawa.csv"
+python3 all_arealist.py "神奈川県横浜市港北区" 2 "kanagawa/kouhoku.csv"
+python3 all_arealist.py "神奈川県横浜市戸塚区" 2 "kanagawa/totsuka.csv"
+python3 all_arealist.py "神奈川県横浜市港南区" 2 "kanagawa/kounan.csv"
+python3 all_arealist.py "神奈川県横浜市旭区" 2 "kanagawa/asahi.csv"
+python3 all_arealist.py "神奈川県横浜市緑区" 2 "kanagawa/yokohamamidori.csv"
+python3 all_arealist.py "神奈川県横浜市瀬谷区" 2 "kanagawa/seya.csv"
+python3 all_arealist.py "神奈川県横浜市栄区" 2 "kanagawa/sakae.csv"
+python3 all_arealist.py "神奈川県横浜市泉区" 2 "kanagawa/izumi.csv"
+python3 all_arealist.py "神奈川県横浜市青葉区" 2 "kanagawa/aoba.csv"
+python3 all_arealist.py "神奈川県横浜市都筑区" 2 "kanagawa/tsuzuki.csv"
+python3 all_arealist.py "神奈川県川崎市川崎区" 2 "kanagawa/kawasaki.csv"
+python3 all_arealist.py "神奈川県川崎市幸区" 2 "kanagawa/saiwai.csv"
+python3 all_arealist.py "神奈川県川崎市中原区" 2 "kanagawa/nakahara.csv"
+python3 all_arealist.py "神奈川県川崎市高津区" 2 "kanagawa/takatsu.csv"
+python3 all_arealist.py "神奈川県川崎市多摩区" 2 "kanagawa/tama.csv"
+python3 all_arealist.py "神奈川県川崎市宮前区" 2 "kanagawa/miyamae.csv"
+python3 all_arealist.py "神奈川県川崎市麻生区" 2 "kanagawa/asao.csv"
+python3 all_arealist.py "神奈川県相模原市緑区" 2 "kanagawa/sagamiharamidori.csv"
+python3 all_arealist.py "神奈川県相模原市中央区" 2 "kanagawa/tyuou.csv"
+python3 all_arealist.py "神奈川県相模原市南区" 2 "kanagawa/sagamiharaminami.csv"
+python3 all_arealist.py "神奈川県横須賀市" 2 "kanagawa/yokosuka.csv"
+python3 all_arealist.py "神奈川県平塚市" 2 "kanagawa/hiratsuka.csv"
+python3 all_arealist.py "神奈川県鎌倉市" 2 "kanagawa/kamakura.csv"
+python3 all_arealist.py "神奈川県藤沢市" 2 "kanagawa/fujisawa.csv"
+python3 all_arealist.py "神奈川県小田原市" 2 "kanagawa/odawara.csv"
+python3 all_arealist.py "神奈川県茅ヶ崎市" 2 "kanagawa/chigasaki.csv"
+python3 all_arealist.py "神奈川県逗子市" 2 "kanagawa/zushi.csv"
+python3 all_arealist.py "神奈川県三浦市" 2 "kanagawa/miura.csv"
+python3 all_arealist.py "神奈川県秦野市" 2 "kanagawa/hadano.csv"
+python3 all_arealist.py "神奈川県厚木市" 2 "kanagawa/atsugi.csv"
+python3 all_arealist.py "神奈川県大和市" 2 "kanagawa/yamato.csv"
+python3 all_arealist.py "神奈川県伊勢原市" 2 "kanagawa/isehara.csv"
+python3 all_arealist.py "神奈川県海老名市" 2 "kanagawa/ebiha.csv"
+python3 all_arealist.py "神奈川県座間市" 2 "kanagawa/zama.csv"
+python3 all_arealist.py "神奈川県南足柄市" 2 "kanagawa/minamiashigara.csv"
+python3 all_arealist.py "神奈川県綾瀬市" 2 "kanagawa/ayase.csv"
+python3 all_arealist.py "神奈川県三浦郡葉山町" 2 "kanagawa/hayama.csv"
+python3 all_arealist.py "神奈川県高座郡寒川町" 2 "kanagawa/samukawa.csv"
+python3 all_arealist.py "神奈川県中郡大磯町" 2 "kanagawa/ooisho.csv"
+python3 all_arealist.py "神奈川県中郡二宮町" 2 "kanagawa/ninomiya.csv"
+python3 all_arealist.py "神奈川県足柄上郡中井町" 2 "kanagawa/nakai.csv"
+python3 all_arealist.py "神奈川県足柄上郡大井町" 2 "kanagawa/ohi.csv"
+python3 all_arealist.py "神奈川県足柄上郡松田町" 2 "kanagawa/matsuda.csv"
+python3 all_arealist.py "神奈川県足柄上郡山北町" 2 "kanagawa/yamakita.csv"
+python3 all_arealist.py "神奈川県足柄上郡開成町" 2 "kanagawa/kaisei.csv"
+python3 all_arealist.py "神奈川県足柄下郡箱根町" 2 "kanagawa/hakone.csv"
+python3 all_arealist.py "神奈川県足柄下郡真鶴町" 2 "kanagawa/manazuru.csv"
+python3 all_arealist.py "神奈川県足柄下郡湯河原町" 2 "kanagawa/yugawara.csv"
+python3 all_arealist.py "神奈川県愛甲郡愛川町" 2 "kanagawa/aikawa.csv"
+python3 all_arealist.py "神奈川県愛甲郡清川村" 2 "kanagawa/kiyokawa.csv"
