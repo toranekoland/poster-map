@@ -72,6 +72,7 @@ python3 all_arealist.py "神奈川県愛甲郡清川村" 1 "kanagawa/kiyokawa.cs
 
 ## 動かない
 python3 all_arealist.py "神奈川県愛甲郡清川村" 3 "kanagawa/kiyokawa.csv"
+python3 all_arealist.py "神奈川県茅ヶ崎市" 3 "kanagawa/chigasaki.csv"
 
 ## 手作業で実施
 ##完了 python3 all_arealist.py "神奈川県横浜市都筑区" 3 "kanagawa/tsuzuki.csv"
@@ -100,8 +101,11 @@ python3 all_arealist.py "神奈川県愛甲郡清川村" 3 "kanagawa/kiyokawa.cs
 python3 all_arealist.py "神奈川県南足柄市" 3 "kanagawa/minamiashigara.csv"
 python3 all_arealist.py "神奈川県厚木市" 3 "kanagawa/atsugi.csv"
 python3 all_arealist.py "神奈川県大和市" 3 "kanagawa/yamato.csv"
-python3 all_arealist.py "神奈川県伊勢原市" 3 "kanagawa/isehara.csv"
+#python3 all_arealist.py "神奈川県伊勢原市" 3 "kanagawa/isehara.csv"
 python3 all_arealist.py "神奈川県秦野市" 3 "kanagawa/hadano.csv"
+python3 all_arealist.py "神奈川県三浦市" 3 "kanagawa/miura.csv"
+#python3 all_arealist.py "神奈川県逗子市" 3 "kanagawa/zushi.csv"
+python3 all_arealist.py "神奈川県小田原市" 3 "kanagawa/odawara.csv"
 
 
 
