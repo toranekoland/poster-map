@@ -87,16 +87,17 @@ python3 all_arealist.py "神奈川県愛甲郡清川村" 3 "kanagawa/kiyokawa.cs
 ##完了 python3 all_arealist.py "神奈川県足柄下郡箱根町" 3 "kanagawa/hakone.csv"
 ##完了 python3 all_arealist.py "神奈川県愛甲郡愛川町" 3 "kanagawa/aikawa.csv"
 
-#python3 all_arealist.py "神奈川県足柄下郡真鶴町" 3 "kanagawa/manazuru.csv"
-#python3 all_arealist.py "神奈川県三浦郡葉山町" 3 "kanagawa/hayama.csv"
-#python3 all_arealist.py "神奈川県足柄下郡湯河原町" 3 "kanagawa/yugawara.csv"
-#python3 all_arealist.py "神奈川県高座郡寒川町" 3 "kanagawa/samukawa.csv"
-#python3 all_arealist.py "神奈川県中郡大磯町" 3 "kanagawa/ooisho.csv"
-#python3 all_arealist.py "神奈川県中郡二宮町" 3 "kanagawa/ninomiya.csv"
+##完了 python3 all_arealist.py "神奈川県足柄下郡真鶴町" 3 "kanagawa/manazuru.csv"
+##完了 python3 all_arealist.py "神奈川県三浦郡葉山町" 3 "kanagawa/hayama.csv"
+##完了 python3 all_arealist.py "神奈川県足柄下郡湯河原町" 3 "kanagawa/yugawara.csv"
+##完了 python3 all_arealist.py "神奈川県高座郡寒川町" 3 "kanagawa/samukawa.csv"
+##完了 python3 all_arealist.py "神奈川県中郡大磯町" 3 "kanagawa/ooisho.csv"
+##完了 python3 all_arealist.py "神奈川県中郡二宮町" 3 "kanagawa/ninomiya.csv"
+##完了 python3 all_arealist.py "神奈川県綾瀬市" 3 "kanagawa/ayase.csv"
+##完了 python3 all_arealist.py "神奈川県座間市" 3 "kanagawa/zama.csv"
+##完了 python3 all_arealist.py "神奈川県海老名市" 3 "kanagawa/ebiha.csv"
+
 python3 all_arealist.py "神奈川県南足柄市" 3 "kanagawa/minamiashigara.csv"
-python3 all_arealist.py "神奈川県綾瀬市" 3 "kanagawa/ayase.csv"
-#python3 all_arealist.py "神奈川県座間市" 3 "kanagawa/zama.csv"
-#python3 all_arealist.py "神奈川県海老名市" 3 "kanagawa/ebiha.csv"
 python3 all_arealist.py "神奈川県厚木市" 3 "kanagawa/atsugi.csv"
 python3 all_arealist.py "神奈川県大和市" 3 "kanagawa/yamato.csv"
 python3 all_arealist.py "神奈川県伊勢原市" 3 "kanagawa/isehara.csv"
@@ -105,7 +106,7 @@ python3 all_arealist.py "神奈川県秦野市" 3 "kanagawa/hadano.csv"
 
 
 ## 出来上がった分をtestに移してマージ
-python3 all_arealist_merge.py test/ arealist.csv "神奈川県" kanagawa-all2.csv
+python3 all_arealist_merge.py test/ arealist.csv "神奈川県" kanagawa-all3.csv
 
 ## Googleスプレッドシートにコピー
 
