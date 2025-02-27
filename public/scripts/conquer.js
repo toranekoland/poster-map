@@ -161,7 +161,7 @@ Promise.all([getConquerblock(), getConquerdata(area_key), getConquerareatotal()]
           const polygon = L.geoJSON(data, {
             style: getGeoJsonStyle(conquer['total_posting']),
           });
-          polygon.bindPopup(`<b>${conquer['subarea_name']}</b><br>トータル: ${conquer['total_posting']}枚<br>最近: ${conquer['recently_posting']}枚`);
+          polygon.bindPopup(`<b>${conquer['subarea_name']}</b><br>トータル: ${conquer['total_posting']}枚<br>group1: ${conquer['group1']}枚 備考:${conquer['group1_note']}<br>group2: ${conquer['group2']}枚 備考:${conquer['group2_note']}<br>group3: ${conquer['group3']}枚 備考:${conquer['group3_note']}<br>group4: ${conquer['group4']}枚 備考:${conquer['group4_note']}<br>group5: ${conquer['group5']}枚 備考:${conquer['group5_note']}<br>`);
           polygon.addTo(map);
         })
         .catch((error) => {
