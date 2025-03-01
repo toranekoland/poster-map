@@ -56,20 +56,25 @@ function getProgressColor(value) {
   return `rgb(${r}, ${g}, ${b})`;
 }
 
-function setPolygonPopup(polygon, conquer) {
-  const popupContent = `
-    <b>${conquer['subarea_name']}</b><br>
-    トータル: ${conquer['total_posting']}枚<br>
-    group1: ${conquer['group1']}枚 備考:${conquer['group1_note']}<br>
-    group2: ${conquer['group2']}枚 備考:${conquer['group2_note']}<br>
-    group3: ${conquer['group3']}枚 備考:${conquer['group3_note']}<br>
-    group4: ${conquer['group4']}枚 備考:${conquer['group4_note']}<br>
-    group5: ${conquer['group5']}枚 備考:${conquer['group5_note']}<br>
-  `;
+function replaceNullWithDefaultValues(data) {
+  for (let i = 1; i <= 5; i++) {
+    const groupKey = `group${i}`;
+    const noteKey = `group${i}_note`;
+    if (data[groupKey] === null) { data[groupKey] = 0;}
+    if (data[noteKey] === null) { data[noteKey] = "";}
+  }
+}
+
+function setPolygonPopup(polygon, conquer, group) {
+  let popupContent = `<b>${conquer['subarea_name']}</b><br>`;
+  popupContent += `トータル: ${conquer['total_posting']}枚<br>`;
+  if (group != 'Total') {
+    popupContent += `${group}: ${conquer[group]}枚<br>備考:${conquer[`${group}_note`]}<br>`;
+  }
   polygon.bindPopup(popupContent);
 }
 
-function setMarkerWithTooltip(lat, lng, areaName, areaKey, areaId, totalPosting) {
+function setMarkerWithTooltip(lat, lng, areaName, areaKey, areaId, totalPosting) { //全体マップの描画
   const marker = L.marker([lat, lng]).addTo(map);
 
   const tooltipContent = `
@@ -117,26 +122,22 @@ function fetchGeoJsonAndSetView(pref, zoomLevel) {
     });
 }
 
-function getGroupGeoJsonStyle(value, group) {
-  // groupがgroup1の場合、赤く塗る
-  if (group === 'group1') {
-    return {
-      color: 'red',  // 赤色に設定
-      fillColor: 'red', // 赤色で塗りつぶし
-      fillOpacity: 0.7,
-      weight: 2,
-    };
-  }
-  
-  // それ以外の処理
-  return {
-    color: 'black',
-    fillColor: getProgressColor(value),  // 残りは進捗色に従う
-    fillOpacity: 0.7,
-    weight: 2,
+function getGroupGeoJsonStyle(value, group) { // 塗りつぶしマップのスタイルを決める
+  const styles = {
+    group1: { color: '#E63946', fillColor: '#E63946', fillOpacity: 0.1, weight: 1 }, // 赤
+    group2: { color: '#457B9D', fillColor: '#457B9D', fillOpacity: 0.1, weight: 1 }, // 青
+    group3: { color: '#2A9D8F', fillColor: '#2A9D8F', fillOpacity: 0.1, weight: 1 }, // 緑
+    group4: { color: '#F4A261', fillColor: '#F4A261', fillOpacity: 0.1, weight: 1 }, // オレンジ
+    group5: { color: '#9B5DE5', fillColor: '#9B5DE5', fillOpacity: 0.1, weight: 1 }, // 紫
+  };
+
+  return styles[group] || { 
+    color: 'black', 
+    fillColor: getProgressColor(value), 
+    fillOpacity: 0.4, 
+    weight: 2 
   };
 }
-
 
 function fetchAndProcessGeoJson(dataSet, isDetailView) {
   for (let [key, data] of Object.entries(dataSet)) {
@@ -146,8 +147,9 @@ function fetchAndProcessGeoJson(dataSet, isDetailView) {
     const totalValue = isDetailView ? data['total_posting'] : conquerareatotal[data['area_id']];
     
     const geoJsonUrl = `https://uedayou.net/loa/${pref}${areaName}.geojson`;
-    console.log(key)
-    console.log(data)
+    if (isDetailView) {
+      replaceNullWithDefaultValues(data);
+    }
 
     fetch(geoJsonUrl)
       .then((response) => {
@@ -157,23 +159,30 @@ function fetchAndProcessGeoJson(dataSet, isDetailView) {
         return response.json();
       })
       .then((geoData) => {
-        let group = '';
-        if (data['group1'] !== null) {group = 'group1';}
-        const polygon = L.geoJSON(geoData, { style: getGroupGeoJsonStyle(totalValue, group) });
-        //const polygon = L.geoJSON(geoData, { style: getGeoJsonStyle(totalValue) });
+
+        let groups = ['Total']; // 'Total' はデフォルトで追加
+        for (let i = 1; i <= 5; i++) {
+          let groupx = `group${i}`;
+          if (data[groupx] !== 0) { groups.push(groupx); }
+        }
 
         if (isDetailView) {
-          setPolygonPopup(polygon, data);
+          //境界線はmapに書き込む
+          const polygon = L.geoJSON(geoData, { style: {color:'black', weight:1,fillOpacity:0,}});
+          polygon.bindPopup(data['subarea_name']);/*`<b>${conquer['subarea_name']}</b><br>`;*/
+          polygon.addTo(map);
+          groups.forEach(group => {
+            const polygon = L.geoJSON(geoData, { style: getGroupGeoJsonStyle(totalValue, group) });
+            setPolygonPopup(polygon, data, group);
+            polygon.addTo(overlays[group]);
+          });
         } else {
+          const polygon = L.geoJSON(geoData, { style: getGroupGeoJsonStyle(totalValue, 'Total') });
+          polygon.addTo(map);
           const centroid = polygon.getBounds().getCenter();
           setMarkerWithTooltip(centroid.lat, centroid.lng, areaName, areaKey, areaId, totalValue);
         }
-        //polygon.addTo(map);
-        if (group === 'group1') {
-          polygon.addTo(overlays['group1']);
-        } else {
-          polygon.addTo(map);
-        }       
+
       })
       .catch((error) => {
         console.error('Error fetching geojson:', error);
@@ -214,7 +223,7 @@ const overlays = {
 
 japanBaseMap.addTo(map);
 map.addLayer(overlays['Total']);
-const layerControl = L.control.layers(baseLayers, overlays, { position: "topleft" }).addTo(map);
+let layerControl = L.control.layers(baseLayers, overlays, { position: "topleft" }).addTo(map);
 
 let areaList;
 let progress;
@@ -232,6 +241,8 @@ Promise.all([getConquerblock(), getConquerdata(area_key), getConquerareatotal()]
   let areaTotalValue;
   if (area_key === null) {
     // area_keyが定義されていない場合、全体マップ
+    map.removeControl(layerControl); // 既存のレイヤーコントロールを削除
+    layerControl = L.control.layers(baseLayers, {}, { position: "topleft" }).addTo(map); // overlaysなしで再作成
     fetchGeoJsonAndSetView(pref, 11); // 都道府県の中心地を取得して移動
     areaTotalValue = conquerareatotal['total']; // 全体データ
     fetchAndProcessGeoJson(conquerblock, false);
@@ -241,8 +252,6 @@ Promise.all([getConquerblock(), getConquerdata(area_key), getConquerareatotal()]
     areaTotalValue = conquerareatotal[area_id]; // 特定エリアのデータ
     fetchAndProcessGeoJson(conquerdata, true);
   }
-  overlays['group1'].addTo(map);
-
   //マップ合計と凡例を表示
   areatotalBox(areaTotalValue, 'topright').addTo(map)
   legend().addTo(map);
