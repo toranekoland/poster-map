@@ -1,12 +1,3 @@
-const map = L.map("map").setView([35.669400214188606, 139.48343915372877], 11);
-
-// 背景地図はOpenStreetMap
-const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 19,
-  attribution:
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Linked Open Addresses Japan',
-}).addTo(map);
-
 function legend() {
   var control = L.control({ position: 'topright' });
   control.onAdd = function () {
@@ -79,6 +70,27 @@ function getParamFromUrl(paramName) {
   return params.get(paramName);
 }
 
+var map = L.map("map", { preferCanvas: true, zoomControl: false }).setView([35.669400214188606, 139.48343915372877], 11);
+
+const baseLayers = {
+  'OpenStreetMap': osm,
+  'Google Map': googleMap,
+  '国土地理院地図': japanBaseMap,
+};
+
+const overlays = {
+  'group1':  L.layerGroup(),
+  'group2':  L.layerGroup(),
+  'group3':  L.layerGroup(),
+  'group4':  L.layerGroup(),
+  'group5':  L.layerGroup(),
+  'Total':  L.layerGroup(),
+};
+
+japanBaseMap.addTo(map);
+Object.values(overlays).forEach(layer => map.addLayer(layer));
+const layerControl = L.control.layers(baseLayers, overlays, { position: "topleft" }).addTo(map);
+
 let areaList;
 let progress;
 const area_key = getParamFromUrl("area_key");
@@ -143,8 +155,8 @@ Promise.all([getConquerblock(), getConquerdata(area_key), getConquerareatotal()]
           console.error('Error fetching geojson:', error);
         });
     }
-    areatotalBox((conquerareatotal['total'] ), 'topright').addTo(map)
-    legend().addTo(map);
+    //areatotalBox((conquerareatotal['total'] ), 'topright').addTo(map)
+    //legend().addTo(map);
   } else {
     // area_keyが定義されている場合、詳細マップ(ポスター枚数による塗分け)を表示する
     map.setView([lat, lng], 14);

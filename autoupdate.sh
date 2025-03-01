@@ -39,7 +39,7 @@ python3 summarize_progress_absolute.py ./public/data/summary_absolute.json
 
 
 
-git add -N .
+git add -N ./public/data/
 
 if ! git diff --exit-code --quiet
 then
