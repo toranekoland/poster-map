@@ -16,14 +16,44 @@
   "チーム深作": [
     {
       "id": 0,
-      "name": "要補修",
-      "color": "#000000",
+      "name": "未完了",
+      "color": "#FFDFBA",
       "note": "メモ１"
+    },
+    {
+      "id": 1,
+      "name": "完了",
+      "color": "#B3FFBA",
+      "note": ""
+    },
+    {
+      "id": 2,
+      "name": "要営業",
+      "color": "#E1BAFF",
+      "note": ""
+    },
+    {
+      "id": 3,
+      "name": "要設置（営業済）",
+      "color": "#BAE1FF",
+      "note": ""
+    },
+    {
+      "id": 4,
+      "name": "撤去済",
+      "color": "#FFFFBA",
+      "note": ""
+    },
+    {
+      "id": 5,
+      "name": "要補修",
+      "color": "#FFB3BA",
+      "note": ""
     },
     {
       "id": 2,
       "name": "未完了",
-      "color": "#FFFFFF",
+      "color": "#0288D1",
       "note": "メモ２"
     }
   ]
